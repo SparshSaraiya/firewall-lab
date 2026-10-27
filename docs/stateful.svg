@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 330" font-family="Arial, Helvetica, sans-serif">
+  <rect width="760" height="330" fill="#ffffff"/>
+  <text x="380" y="28" text-anchor="middle" font-size="18" font-weight="bold" fill="#1f2937">Stateful firewall = a guard with a guest list</text>
+
+  <text x="90" y="70" text-anchor="middle" font-size="14" font-weight="bold" fill="#0c4a6e">Client</text>
+  <text x="380" y="70" text-anchor="middle" font-size="14" font-weight="bold" fill="#7f1d1d">Firewall</text>
+  <text x="670" y="70" text-anchor="middle" font-size="14" font-weight="bold" fill="#14532d">Server</text>
+  <line x1="90" y1="80" x2="90" y2="300" stroke="#9ca3af" stroke-dasharray="4"/>
+  <line x1="380" y1="80" x2="380" y2="300" stroke="#9ca3af" stroke-dasharray="4"/>
+  <line x1="670" y1="80" x2="670" y2="300" stroke="#9ca3af" stroke-dasharray="4"/>
+
+  <line x1="90" y1="110" x2="380" y2="110" stroke="#0369a1" stroke-width="2"/>
+  <text x="235" y="102" text-anchor="middle" font-size="12" fill="#0369a1">1. SYN to port 443 (NEW)</text>
+  <text x="385" y="128" font-size="12" fill="#15803d">Rule says NEW to 443 is OK. Write it in the notebook (conntrack).</text>
+  <line x1="380" y1="140" x2="670" y2="140" stroke="#0369a1" stroke-width="2"/>
+
+  <line x1="670" y1="185" x2="380" y2="185" stroke="#15803d" stroke-width="2"/>
+  <text x="525" y="177" text-anchor="middle" font-size="12" fill="#15803d">2. SYN-ACK (a reply)</text>
+  <text x="375" y="205" text-anchor="end" font-size="12" fill="#15803d">"I wrote this one down: ESTABLISHED." Pass.</text>
+  <line x1="380" y1="215" x2="90" y2="215" stroke="#15803d" stroke-width="2"/>
+
+  <line x1="670" y1="262" x2="380" y2="262" stroke="#b91c1c" stroke-width="2"/>
+  <text x="525" y="254" text-anchor="middle" font-size="12" fill="#b91c1c">3. Fake "reply" nobody asked for</text>
+  <text x="375" y="282" text-anchor="end" font-size="12" fill="#b91c1c">Not in the notebook. DROP.</text>
+  <text x="380" y="318" text-anchor="middle" font-size="12" fill="#6b7280">A stateless rule (just "not a SYN") would have let #3 through. Proved in Exercise 2.</text>
+</svg>

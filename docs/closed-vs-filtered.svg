@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 330" font-family="Arial, Helvetica, sans-serif">
+  <rect width="760" height="330" fill="#ffffff"/>
+  <text x="380" y="28" text-anchor="middle" font-size="18" font-weight="bold" fill="#1f2937">Knocking on doors: closed vs filtered</text>
+
+  <rect x="20" y="50" width="350" height="255" rx="12" fill="#fef9c3" stroke="#a16207" stroke-width="2"/>
+  <text x="195" y="78" text-anchor="middle" font-size="16" font-weight="bold" fill="#713f12">CLOSED (no firewall in the way)</text>
+  <text x="70" y="125" text-anchor="middle" font-size="13" fill="#713f12">Client</text>
+  <text x="320" y="125" text-anchor="middle" font-size="13" fill="#713f12">Server</text>
+  <line x1="95" y1="120" x2="290" y2="120" stroke="#374151" stroke-width="2"/>
+  <text x="195" y="112" text-anchor="middle" font-size="12" fill="#374151">SYN "anyone home?"</text>
+  <line x1="290" y1="160" x2="95" y2="160" stroke="#b91c1c" stroke-width="2"/>
+  <text x="195" y="152" text-anchor="middle" font-size="12" fill="#b91c1c">RST "no, nobody here"</text>
+  <text x="195" y="215" text-anchor="middle" font-size="14" fill="#713f12">You get an answer, fast.</text>
+  <text x="195" y="240" text-anchor="middle" font-size="13" fill="#713f12">nmap says: closed</text>
+  <text x="195" y="270" text-anchor="middle" font-size="12" fill="#713f12">The host exists, the door is just shut.</text>
+
+  <rect x="390" y="50" width="350" height="255" rx="12" fill="#fee2e2" stroke="#b91c1c" stroke-width="2"/>
+  <text x="565" y="78" text-anchor="middle" font-size="16" font-weight="bold" fill="#7f1d1d">FILTERED (firewall DROPs it)</text>
+  <text x="440" y="125" text-anchor="middle" font-size="13" fill="#7f1d1d">Client</text>
+  <text x="690" y="125" text-anchor="middle" font-size="13" fill="#7f1d1d">Server</text>
+  <line x1="465" y1="120" x2="530" y2="120" stroke="#374151" stroke-width="2"/>
+  <text x="500" y="112" text-anchor="middle" font-size="12" fill="#374151">SYN</text>
+  <rect x="530" y="95" width="30" height="75" fill="#b91c1c"/>
+  <text x="545" y="190" text-anchor="middle" font-size="11" fill="#7f1d1d">firewall</text>
+  <text x="565" y="225" text-anchor="middle" font-size="14" fill="#7f1d1d">Silence. You wait... and wait.</text>
+  <text x="565" y="250" text-anchor="middle" font-size="13" fill="#7f1d1d">nmap says: filtered (also slower)</text>
+  <text x="565" y="280" text-anchor="middle" font-size="12" fill="#7f1d1d">An attacker learns nothing, not even if a host exists.</text>
+</svg>

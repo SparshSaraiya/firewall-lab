@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 300" font-family="Arial, Helvetica, sans-serif">
+  <rect width="760" height="300" fill="#ffffff"/>
+  <text x="380" y="30" text-anchor="middle" font-size="18" font-weight="bold" fill="#1f2937">The lab: three computers in a row</text>
+
+  <rect x="30" y="70" width="190" height="150" rx="12" fill="#e0f2fe" stroke="#0369a1" stroke-width="2"/>
+  <text x="125" y="98" text-anchor="middle" font-size="17" font-weight="bold" fill="#0c4a6e">CLIENT</text>
+  <text x="125" y="120" text-anchor="middle" font-size="13" fill="#0c4a6e">"the visitor"</text>
+  <text x="125" y="150" text-anchor="middle" font-size="13" fill="#0c4a6e">10.0.1.10 (admin)</text>
+  <text x="125" y="170" text-anchor="middle" font-size="13" fill="#0c4a6e">10.0.1.20 (regular)</text>
+  <text x="125" y="190" text-anchor="middle" font-size="13" fill="#0c4a6e">.30 .40 .50 (pretend attackers)</text>
+
+  <rect x="285" y="70" width="190" height="150" rx="12" fill="#fee2e2" stroke="#b91c1c" stroke-width="2"/>
+  <text x="380" y="98" text-anchor="middle" font-size="17" font-weight="bold" fill="#7f1d1d">FIREWALL (fw)</text>
+  <text x="380" y="120" text-anchor="middle" font-size="13" fill="#7f1d1d">"the security guard"</text>
+  <text x="380" y="150" text-anchor="middle" font-size="13" fill="#7f1d1d">10.0.1.1  |  10.0.2.1</text>
+  <text x="380" y="172" text-anchor="middle" font-size="13" fill="#7f1d1d">iptables FORWARD chain</text>
+  <text x="380" y="192" text-anchor="middle" font-size="13" fill="#7f1d1d">default: DROP</text>
+
+  <rect x="540" y="70" width="190" height="150" rx="12" fill="#dcfce7" stroke="#15803d" stroke-width="2"/>
+  <text x="635" y="98" text-anchor="middle" font-size="17" font-weight="bold" fill="#14532d">SERVER</text>
+  <text x="635" y="120" text-anchor="middle" font-size="13" fill="#14532d">"the building"</text>
+  <text x="635" y="150" text-anchor="middle" font-size="13" fill="#14532d">10.0.2.2</text>
+  <text x="635" y="170" text-anchor="middle" font-size="13" fill="#14532d">web 80/443/8080, SSH 22</text>
+  <text x="635" y="190" text-anchor="middle" font-size="13" fill="#14532d">forgotten: 3306, 23</text>
+
+  <line x1="220" y1="145" x2="285" y2="145" stroke="#374151" stroke-width="3"/>
+  <line x1="475" y1="145" x2="540" y2="145" stroke="#374151" stroke-width="3"/>
+  <text x="252" y="135" text-anchor="middle" font-size="11" fill="#374151">veth</text>
+  <text x="507" y="135" text-anchor="middle" font-size="11" fill="#374151">veth</text>
+
+  <text x="380" y="265" text-anchor="middle" font-size="14" fill="#374151">Every packet from the client to the server has to walk past the firewall. It decides: let in, or throw away.</text>
+  <text x="380" y="285" text-anchor="middle" font-size="12" fill="#6b7280">All three are Linux "network namespaces" inside WSL2. Nothing touches your real network.</text>
+</svg>

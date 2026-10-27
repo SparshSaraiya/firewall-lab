@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 300" font-family="Arial, Helvetica, sans-serif">
+  <rect width="760" height="300" fill="#ffffff"/>
+  <text x="380" y="28" text-anchor="middle" font-size="18" font-weight="bold" fill="#1f2937">Rule order: the first rule that matches wins</text>
+
+  <text x="195" y="62" text-anchor="middle" font-size="15" font-weight="bold" fill="#b91c1c">WRONG order</text>
+  <rect x="40" y="75" width="310" height="40" rx="6" fill="#dcfce7" stroke="#15803d"/>
+  <text x="195" y="100" text-anchor="middle" font-size="12" fill="#14532d">1. ACCEPT everyone in 10.0.1.0/24</text>
+  <rect x="40" y="125" width="310" height="40" rx="6" fill="#f3f4f6" stroke="#9ca3af" stroke-dasharray="4"/>
+  <text x="195" y="150" text-anchor="middle" font-size="12" fill="#6b7280">2. DROP 10.0.1.20 on port 22 (never reached)</text>
+  <text x="195" y="195" text-anchor="middle" font-size="12" fill="#b91c1c">.20 packet is accepted by rule 1.</text>
+  <text x="195" y="215" text-anchor="middle" font-size="12" fill="#b91c1c">Rule 2 counter stays at 0 = "shadowed".</text>
+
+  <text x="565" y="62" text-anchor="middle" font-size="15" font-weight="bold" fill="#15803d">RIGHT order</text>
+  <rect x="410" y="75" width="310" height="40" rx="6" fill="#fee2e2" stroke="#b91c1c"/>
+  <text x="565" y="100" text-anchor="middle" font-size="12" fill="#7f1d1d">1. DROP 10.0.1.20 on port 22 (specific)</text>
+  <rect x="410" y="125" width="310" height="40" rx="6" fill="#dcfce7" stroke="#15803d"/>
+  <text x="565" y="150" text-anchor="middle" font-size="12" fill="#14532d">2. ACCEPT everyone in 10.0.1.0/24 (broad)</text>
+  <text x="565" y="195" text-anchor="middle" font-size="12" fill="#15803d">.20 is stopped, .10 still gets in.</text>
+  <text x="565" y="215" text-anchor="middle" font-size="12" fill="#15803d">Rule 1 counter goes up = it works.</text>
+
+  <text x="380" y="270" text-anchor="middle" font-size="13" fill="#374151">Specific rules go above broad rules. Check with: iptables -L FORWARD -n -v --line-numbers</text>
+</svg>

@@ -1,0 +1,16 @@
+# Deliberately bad ruleset (iptables-save format) for testing audit_rules.py
+*filter
+:INPUT ACCEPT [0:0]
+:FORWARD DROP [0:0]
+:OUTPUT ACCEPT [0:0]
+-A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+-A INPUT -p tcp -m tcp --dport 22 -j ACCEPT
+-A INPUT -s 0.0.0.0/0 -p tcp -m tcp --dport 3389 -j ACCEPT
+-A INPUT -s 10.0.0.0/8 -p tcp -m tcp --dport 443 -j ACCEPT
+-A INPUT -p tcp -m multiport --dports 80,443,3306 -j ACCEPT
+-A INPUT -p tcp -m tcp --dport 1024:65535 -j ACCEPT
+-A INPUT -s 203.0.113.0/24 -p tcp -m tcp --dport 8443 -j ACCEPT
+-A INPUT -s 203.0.113.50/32 -p tcp -m tcp --dport 8443 -j DROP
+-A FORWARD -s 10.1.0.0/16 -j ACCEPT
+-A FORWARD -j ACCEPT
+COMMIT

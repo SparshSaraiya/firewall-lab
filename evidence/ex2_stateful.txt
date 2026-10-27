@@ -1,0 +1,41 @@
+
+### EX2: stateful vs stateless
+
+### 2a. Stateful baseline: HTTPS works, conntrack remembers the flow
+$ ip netns exec client curl -sk --max-time 3 https://app.lab
+hello from app.lab
+$ ip netns exec fw conntrack -L 2>/dev/null | grep 'dport=443' | head -3
+tcp      6 19 TIME_WAIT src=10.0.1.10 dst=10.0.2.2 sport=45546 dport=443 src=10.0.2.2 dst=10.0.1.10 sport=443 dport=45546 [ASSURED] mark=0 use=1
+tcp      6 72 TIME_WAIT src=10.0.1.10 dst=10.0.2.2 sport=59646 dport=443 src=10.0.2.2 dst=10.0.1.10 sport=443 dport=59646 [ASSURED] mark=0 use=1
+tcp      6 119 TIME_WAIT src=10.0.1.10 dst=10.0.2.2 sport=36008 dport=443 src=10.0.2.2 dst=10.0.1.10 sport=443 dport=36008 [ASSURED] mark=0 use=1
+
+### 2b. Delete the ESTABLISHED,RELATED rule (rule #1) -> replies have no permission
+$ ip netns exec fw iptables -D FORWARD 1
+$ ip netns exec fw iptables -S FORWARD
+-P FORWARD DROP
+-A FORWARD -s 10.0.1.10/32 -d 10.0.2.2/32 -p tcp -m tcp --dport 22 -m conntrack --ctstate NEW -j ACCEPT
+-A FORWARD -d 10.0.2.2/32 -p tcp -m tcp --dport 443 -m conntrack --ctstate NEW -j ACCEPT
+$ ip netns exec client curl -sk --max-time 3 https://app.lab || echo 'curl FAILED (timeout)'
+curl FAILED (timeout)
+19:47:07.040744 fw-c  In  IP 10.0.1.10.49140 > 10.0.2.2.443: Flags [S], seq 2682644208, win 64240, options [mss 1460,sackOK,TS val 2086211382 ecr 0,nop,wscale 10], length 0
+19:47:07.040801 fw-s  Out IP 10.0.1.10.49140 > 10.0.2.2.443: Flags [S], seq 2682644208, win 64240, options [mss 1460,sackOK,TS val 2086211382 ecr 0,nop,wscale 10], length 0
+19:47:07.040887 fw-s  In  IP 10.0.2.2.443 > 10.0.1.10.49140: Flags [S.], seq 176799476, ack 2682644209, win 65160, options [mss 1460,sackOK,TS val 2340187952 ecr 2086211382,nop,wscale 10], length 0
+19:47:08.042000 fw-s  In  IP 10.0.2.2.443 > 10.0.1.10.49140: Flags [S.], seq 176799476, ack 2682644209, win 65160, options [mss 1460,sackOK,TS val 2340188953 ecr 2086211382,nop,wscale 10], length 0
+19:47:08.042026 fw-c  In  IP 10.0.1.10.49140 > 10.0.2.2.443: Flags [S], seq 2682644208, win 64240, options [mss 1460,sackOK,TS val 2086212383 ecr 0,nop,wscale 10], length 0
+19:47:09.065951 fw-c  In  IP 10.0.1.10.49140 > 10.0.2.2.443: Flags [S], seq 2682644208, win 64240, options [mss 1460,sackOK,TS val 2086213407 ecr 0,nop,wscale 10], length 0
+19:47:10.057757 fw-s  In  IP 10.0.2.2.443 > 10.0.1.10.49140: Flags [S.], seq 176799476, ack 2682644209, win 65160, options [mss 1460,sackOK,TS val 2340190969 ecr 2086211382,nop,wscale 10], length 0
+^ SYN reaches the server side, SYN-ACK comes back but fw drops it: client never completes the handshake
+
+### 2c. Stateless 'fix' (pre-conntrack style): allow any server->client TCP packet that is not a SYN
+$ ip netns exec fw iptables -A FORWARD -s 10.0.2.2 -p tcp ! --syn -j ACCEPT
+$ ip netns exec client curl -sk --max-time 3 https://app.lab
+Works. But the rule only looks at flags, not at who started the conversation. Test: SERVER sends unsolicited ACK probes; we sniff on the CLIENT side:
+19:47:15.207281 IP 10.0.2.2.52720 > 10.0.1.10.4444: Flags [.], ack 4144110829, win 1024, length 0
+19:47:16.208692 IP 10.0.2.2.52722 > 10.0.1.10.4444: Flags [.], ack 4143979759, win 1024, length 0
+^ the unsolicited ACK crossed the firewall and reached the client (nmap shows 'filtered' only because the client's RST reply can't come back). A stateless rule lets anyone craft packets that look like replies.
+
+### 2d. Back to stateful: same probe
+(nothing arrived at client)
+^ nothing arrives: no conntrack entry for this packet -> INVALID/NEW -> default DROP
+$ ip netns exec client curl -sk --max-time 3 https://app.lab
+hello from app.lab

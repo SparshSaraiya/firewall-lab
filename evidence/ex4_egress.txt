@@ -1,0 +1,28 @@
+
+### EX4: egress filtering (server initiating outbound connections)
+
+### 4a. Common misconfig: inbound locked down, but the server may talk OUT to anywhere
+$ ip netns exec fw iptables -A FORWARD -s 10.0.2.2 -j ACCEPT
+server -> 10.0.1.10:4444  CONNECTED
+server -> 10.0.1.10:443  CONNECTED
+^ A compromised server can call home on ANY port (reverse shell on 4444, C2, data exfil).
+
+### 4b. Egress allow-list: server may only start DNS (udp/53) and HTTPS (tcp/443) outbound; default-drop the rest
+$ ip netns exec fw iptables -A FORWARD -s 10.0.2.2 -p udp --dport 53 -m conntrack --ctstate NEW -j ACCEPT
+$ ip netns exec fw iptables -A FORWARD -s 10.0.2.2 -p tcp --dport 443 -m conntrack --ctstate NEW -j ACCEPT
+server -> 10.0.1.10:4444  blocked/timeout
+server -> 10.0.1.10:443  CONNECTED
+$ ip netns exec fw iptables -S FORWARD
+-P FORWARD DROP
+-A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+-A FORWARD -s 10.0.1.10/32 -d 10.0.2.2/32 -p tcp -m tcp --dport 22 -m conntrack --ctstate NEW -j ACCEPT
+-A FORWARD -d 10.0.2.2/32 -p tcp -m tcp --dport 443 -m conntrack --ctstate NEW -j ACCEPT
+-A FORWARD -s 10.0.2.2/32 -p udp -m udp --dport 53 -m conntrack --ctstate NEW -j ACCEPT
+-A FORWARD -s 10.0.2.2/32 -p tcp -m tcp --dport 443 -m conntrack --ctstate NEW -j ACCEPT
+^ Reverse shell on 4444 is dead; patching/updates over 443 still work. Replies to inbound traffic still flow via ESTABLISHED.
+Limit: 443 is still open to anyone, so C2 over 443 survives. Real fix = allow only specific destination IPs/proxy (here: -d <update mirror>) plus DNS/proxy inspection.
+
+### 4c. Tighten further: allow 443 only to one named destination
+$ ip netns exec fw iptables -A FORWARD -s 10.0.2.2 -d 10.0.1.10 -p tcp --dport 443 -m conntrack --ctstate NEW -j ACCEPT
+server -> 10.0.1.10:443  CONNECTED
+server -> 10.0.1.20:443 blocked (not on allow-list)

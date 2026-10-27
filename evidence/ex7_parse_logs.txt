@@ -1,0 +1,37 @@
+17 blocked packets parsed (0 non-matching lines ignored)
+
+Blocked attempts by source IP
+  10.0.1.20        6
+  10.0.1.30        4
+  10.0.1.50        4
+  10.0.1.40        2
+  10.0.2.2         1
+
+Blocked attempts by destination port
+  TCP/22       5
+  TCP/3306     2
+  TCP/23       2
+  TCP/80       1
+  TCP/445      1
+  TCP/3389     1
+  TCP/2323     1
+  TCP/8080     1
+  TCP/5432     1
+  TCP/6379     1
+
+Top source IP + port pairs
+  10.0.1.20        TCP/22     3
+  10.0.1.30        TCP/22     2
+  10.0.1.20        TCP/80     1
+  10.0.1.20        TCP/3306   1
+  10.0.1.20        TCP/23     1
+  10.0.1.30        TCP/445    1
+  10.0.1.30        TCP/3389   1
+  10.0.1.40        TCP/23     1
+  10.0.1.40        TCP/2323   1
+  10.0.1.50        TCP/3306   1
+
+Possible port scans (>= 3 distinct ports from one source)
+  10.0.1.20        4 distinct ports
+  10.0.1.50        4 distinct ports
+  10.0.1.30        3 distinct ports

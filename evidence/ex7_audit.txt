@@ -1,0 +1,28 @@
+=== risky
+10 rules audited, 9 finding(s)
+
+[CRITICAL] rule #10: ACCEPT with no source, destination, protocol or port restriction (allows everything)
+         -A FORWARD -j ACCEPT
+[HIGH] rule #0: INPUT chain policy is ACCEPT (default allow, not default deny)
+         :INPUT ACCEPT
+[HIGH] rule #2: SSH (port 22) open to any source (0.0.0.0/0); restrict the source
+         -A INPUT -p tcp -m tcp --dport 22 -j ACCEPT
+[HIGH] rule #3: RDP (port 3389) open to any source (0.0.0.0/0); restrict the source
+         -A INPUT -s 0.0.0.0/0 -p tcp -m tcp --dport 3389 -j ACCEPT
+[HIGH] rule #5: MySQL (port 3306) open to any source (0.0.0.0/0); restrict the source
+         -A INPUT -p tcp -m multiport --dports 80,443,3306 -j ACCEPT
+[HIGH] rule #6: port range 1024-65535 (64512 ports) open to any source, includes sensitive ports [1433, 3306, 3389, 5432, 5900, 6379, 9200, 27017]
+         -A INPUT -p tcp -m tcp --dport 1024:65535 -j ACCEPT
+[MEDIUM] rule #4: source range 10.0.0.0/8 is wider than /16 (16,777,216 addresses)
+         -A INPUT -s 10.0.0.0/8 -p tcp -m tcp --dport 443 -j ACCEPT
+[MEDIUM] rule #7: shadowed by rule #6 (ACCEPT): the earlier rule already matches all of this rule's traffic, so this one never fires
+         -A INPUT -s 203.0.113.0/24 -p tcp -m tcp --dport 8443 -j ACCEPT
+[MEDIUM] rule #8: shadowed by rule #6 (ACCEPT): the earlier rule already matches all of this rule's traffic, so this one never fires
+         -A INPUT -s 203.0.113.50/32 -p tcp -m tcp --dport 8443 -j DROP
+exit=0
+=== lab-good
+4 rules audited, 1 finding(s)
+
+[HIGH] rule #0: INPUT chain policy is ACCEPT (default allow, not default deny)
+         :INPUT ACCEPT
+exit=0
